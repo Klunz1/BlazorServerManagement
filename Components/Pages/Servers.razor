@@ -7,6 +7,10 @@
 {
     <button type="button">@s</button>
 }
+
+
+    <ServerComponent @rendermode="InteractiveServer"></ServerComponent>
+
 <ul>
     @foreach(var server in servers)
     {
@@ -16,10 +20,30 @@
                 @(server.IsOnline ? "Online" : "Offline")
             </span>
             <a href="/servers/@server.ServerId" class="btn btn-link">Edit</a>
+            &nbsp;
+            <EditForm
+                Model="server"
+                FormName="@($"from-server-{server.ServerId}")"
+                OnValidSubmit=@(()=> {DeleteServer(server.ServerId);})>
+                <button type="submit" class="btn btn-primary">Delete</button>
+             </EditForm>
+
         </li>
+
     }
+    <div>
+        <a href="/addserver" class="btn btn-link">Add</a>
+    </div>
 </ul>
 @code {
-    private List<Server> servers = ServersRepository.GetServersByCity("Toronto");
+    private List<Server> servers = ServersRepository.GetServers;
     private List<string> cities = CitiesRepository.GetCities();
+
+    private void DeleteServer(int serverId)
+    {
+        if(serverId>0)
+        {
+            ServersRepository.DeleteServer(serverId);
+        }
+    }
 }
